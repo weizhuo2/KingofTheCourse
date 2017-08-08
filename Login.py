@@ -10,5 +10,11 @@ def input_infos():
 
 username = ""
 pw = ""
+postURL = "https://eas.admin.uillinois.edu/eas/servlet/login.do"
 
 (username,pw) = input_infos()
+
+cookie = cookielib.CookieJar()
+handler = urllib2.HTTPCookieProcessor(cookie)
+opener = urllib2.build_opener(handler)
+
