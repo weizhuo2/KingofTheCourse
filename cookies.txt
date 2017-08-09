@@ -1,0 +1,9 @@
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+eas.admin.uillinois.edu	FALSE	/eas/	TRUE		JSESSIONID	625392B4BBE8024F06AD099E4BAA3A61
+eas.admin.uillinois.edu	FALSE	/	TRUE		ApplicationSessionId	7f47792d-58fd-487e-ad69-358bf48a1161-117.136.94.203
+eas.admin.uillinois.edu	FALSE	/	TRUE		EnterpriseSessionId	0dbf62e7-840b-430b-92a2-594372fd1b38-117.136.94.203
+eas.admin.uillinois.edu	FALSE	/	TRUE		RedirectString	"https://webprod.admin.uillinois.edu/ssa/servlet/SelfServiceLogin?appName=edu.uillinois.aits.SelfServiceLogin&dad=BANPROD1"
+eas.admin.uillinois.edu	FALSE	/	TRUE		TESTID	test
