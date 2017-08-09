@@ -1,5 +1,6 @@
 #encoding=utf-8
 # Written By WWZ - AUG 7 2017
+import os
 import urllib
 import urllib2
 import cookielib
@@ -46,10 +47,11 @@ website = opener.open(request)
 f = open('website.html','w')
 f.write(website.read())
 f.close()
+print 'Page saved in app directory!'
 
-print "Page saved in app directory!"
-
-
+#opening the file using web browser
+print 'Opening the page...'
+os.system('open website.html')
 
 
 
