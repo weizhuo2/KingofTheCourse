@@ -12,6 +12,8 @@ def input_infos():
 username = ""
 pw = ""
 
+(username,pw) = input_infos()
+
 postURL = "https://eas.admin.uillinois.edu/eas/servlet/login.do"
 headers = {
 	'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) '
@@ -20,12 +22,10 @@ headers = {
 	'Referer':'https://eas.admin.uillinois.edu/eas/servlet/EasLogin?redirect=https://webprod.admin.uillinois.edu/ssa/servlet/SelfServiceLogin?appName=edu.uillinois.aits.SelfServiceLogin&dad=BANPROD1'
 }
 form = {
-	'inputEnterpriseId':'weizhuo2',
-	'password':'sbsbsbsb',
+	'inputEnterpriseId':username,
+	'password':pw,
 	'BTN_LOGIN':'Log+In'
 }
-
-#(username,pw) = input_infos()
 
 #Creating a cookieJar
 cookie = cookielib.CookieJar()
@@ -47,6 +47,7 @@ f = open('website.html','w')
 f.write(website.read())
 f.close()
 
+print "Page saved in app directory!"
 
 
 
