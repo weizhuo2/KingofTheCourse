@@ -81,7 +81,7 @@
 						<form method="post" id="easFormId" name="easForm" action="login.do" class="easform">
 							<div class="quest">
 							  
-								  <div class="login-error" id="login-error-id">Authenticated successfully, cookies must be on!  The Redirect URL is not registered!</div>
+								  <div class="login-error" id="login-error-id">The NetID or password that you provided was incorrect.</div>
 								
 								
 								<label for="netid">NetID</label>
