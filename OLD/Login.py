@@ -1,16 +1,16 @@
-#test field
 #encoding=utf-8
 # Written By WWZ - AUG 7 2017
 import os
+import re
 import urllib
 import urllib2
-import requests
 import cookielib
 
 def input_infos():
 	username = raw_input("NetID: ")
 	pw = raw_input("Password: ")
 	return username,pw
+
 
 username = ""
 pw = ""
@@ -31,11 +31,6 @@ form = {
 	'BTN_LOGIN':'Log+In'
 }
 
-#Rewrite using Requests
-session = requests.Session()
-session.post(postURL,form)
-
-'''
 #Loading a cookieJar
 jar = cookielib.MozillaCookieJar()
 jar.load('cookies.txt', ignore_discard=True, ignore_expires=True)
@@ -49,24 +44,41 @@ opener = urllib2.build_opener(handler)
 request = urllib2.Request(postURL, coded_form, headers)
 website = opener.open(request)
 
+#print the content
+content = website.read()
+print content
+
+try:
+	success1 = re.search('meta http-equiv="refresh" content="0;url=', content, flags=0).span()
+except AttributeError:
+	print 'Login Failed, check your password and username.'
+else:
+	success2 = re.search('">', content, flags=0).span()
+	print 'Login Succeed.\nMatched at:'
+	print success1,success2
+	add = content[success1[1]:success2[0]]
+	HomePageURL = 'https://ui2web1.apps.uillinois.edu' + add
+	print HomePageURL
+
+
+'''
 #Some tools to debug
-#print '\nDebug tools\n'
-a = website.read()
-print type(a)
+print '\nDebug tools\n'
+
+#print website.read()
 
 print website.headers
 print jar
-
+'''
 #save as HTML file
 
 f = open('website.txt','w')
-f.write(a)
+f.write(content)
 f.close()
 print 'Page saved in app directory!'
-
+'''
 #opening the file using web browser
 print 'Opening the page...'
 os.system('open website.html')
-
 '''
 
