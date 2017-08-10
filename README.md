@@ -1,2 +1,0 @@
-# KingofTheCourse
-抢！
