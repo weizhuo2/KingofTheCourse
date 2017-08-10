@@ -1,83 +1,91 @@
-#encoding=utf-8
-# Written By WWZ - AUG 7 2017
-import os
+# -*- coding: utf-8 -*-
+
+import requests
+import getpass
 import re
-import urllib
-import urllib2
-import cookielib
 
-def input_infos():
-	username = raw_input("NetID: ")
-	pw = raw_input("Password: ")
-	return username,pw
+loginURL = "https://eas.admin.uillinois.edu/eas/servlet/login.do"
+#URL = "https://ui2web1.apps.uillinois.edu/BANPROD1/twbkwbis.P_GenMenu?name=bmenu.P_MainMnu&amp;msg=WELCOME+<b>Welcome,+Weizhuo+Wang,+to+UI-Integrate+Self-Service!<%2Fb>Aug+09,+201709%3A46+pm"
 
+def get_payload():
+	NID = raw_input("NetID: ")
+	pw = getpass.getpass("Password: ")
+	payload = {
+		'inputEnterpriseId': NID, #NID
+		'password': pw,			#pw
+		'BTN_LOGIN':'Log+In'
+	}
+	return payload
 
-username = ""
-pw = ""
-
-(username,pw) = input_infos()
-
-postURL = "https://eas.admin.uillinois.edu/eas/servlet/login.do"
-headers = {
-	'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) '
+def get_headers():
+	headers = {
+		'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) '
 				'AppleWebKit/537.36 (KHTML, like Gecko) '
 				'Chrome/59.0.3071.115 Safari/537.36',
-	'Referer':'https://eas.admin.uillinois.edu/eas/servlet/login.do'
-}
+		'Referer':'https://eas.admin.uillinois.edu/eas/servlet/login.do'
+	}
+	return headers
 
-form = {
-	'inputEnterpriseId':username,
-	'password':pw,
-	'BTN_LOGIN':'Log+In'
-}
+def LoadCookies():
+	import cookielib
+	jar = cookielib.MozillaCookieJar()
+	jar.load('cookies.txt', ignore_discard=True, ignore_expires=True)
+	return jar
 
-#Loading a cookieJar
-jar = cookielib.MozillaCookieJar()
-jar.load('cookies.txt', ignore_discard=True, ignore_expires=True)
-handler = urllib2.HTTPCookieProcessor(jar)
+def LoginSucceed(content):
+	try:
+		str1 = re.search('meta http-equiv="refresh" content="0;url=', content, flags=0).span()
+	except AttributeError:
+		return False
+	else:
+		str2_1 = re.search('bmenu', content, flags=0).span()
+		str2_2 = re.search('&amp', content, flags=0).span()
+		str3_1 = re.search('WELCOME', content, flags=0).span()
+		str3_2 = re.search('">', content, flags=0).span()
+		print 'Login Succeed.\n'
+		nam = content[str2_1[0]:str2_2[0]]
+		msg = content[str3_1[1]:str3_2[0]]
+		pl = {'name':nam,'msg':msg}
+		return (True,pl)
 
-#Prepare the form
-coded_form = urllib.urlencode(form)
+def SavePage(content,filename):
+	f = open(filename,'w')
+	f.write(content.encode('utf-8'))
+	f.close()
+	print 'Page saved in app directory!'
 
-#Opening the website
-opener = urllib2.build_opener(handler)
-request = urllib2.Request(postURL, coded_form, headers)
-website = opener.open(request)
+def OpenPage(filename):
+	import os
+	os.system('open '+filename)
 
-#print the content
-content = website.read()
-print content
+def main():
+	#Initialize
+	headers = get_headers()
+	session = requests.Session()
+	#Load cookies using cookielib
+	jar = LoadCookies()
+	session.cookies = jar
 
-try:
-	success1 = re.search('meta http-equiv="refresh" content="0;url=', content, flags=0).span()
-except AttributeError:
-	print 'Login Failed, check your password and username.'
-else:
-	success2 = re.search('">', content, flags=0).span()
-	print 'Login Succeed.\nMatched at:'
-	print success1,success2
-	add = content[success1[1]:success2[0]]
-	HomePageURL = 'https://ui2web1.apps.uillinois.edu' + add
+	#post form
+	payload = get_payload()
+	loginPage = session.post(loginURL,payload,headers)
+	#Is the login succeed?
+	content = loginPage.text
+	Success = LoginSucceed(content)
 
 
-'''
-#Some tools to debug
-print '\nDebug tools\n'
+	if type(Success) == bool:
+		print 'Login Failed, check your password and username.'
+		#Unfinished here, return to login entering page
+	elif type(Success) == tuple:
+		pl = Success[1]
+		menuPage = session.get('https://ui2web1.apps.uillinois.edu/BANPROD1/twbkwbis.P_GenMenu',params = pl)
+		print 'Jumping to: ', menuPage.url
+		content = menuPage.text #Note that content temporarily holds source code of HTML page.
+		SavePage(content,'menuPage.html')
+		OpenPage('menuPage.html')
 
-#print website.read()
 
-print website.headers
-print jar
-'''
-#save as HTML file
 
-f = open('website.txt','w')
-f.write(content)
-f.close()
-print 'Page saved in app directory!'
-'''
-#opening the file using web browser
-print 'Opening the page...'
-os.system('open website.html')
-'''
-
+if __name__ == "__main__":
+	main()
