@@ -4,6 +4,7 @@
 import os
 import urllib
 import urllib2
+import requests
 import cookielib
 
 def input_infos():
@@ -30,6 +31,11 @@ form = {
 	'BTN_LOGIN':'Log+In'
 }
 
+#Rewrite using Requests
+session = requests.Session()
+session.post(postURL,form)
+
+'''
 #Loading a cookieJar
 jar = cookielib.MozillaCookieJar()
 jar.load('cookies.txt', ignore_discard=True, ignore_expires=True)
@@ -57,9 +63,10 @@ f = open('website.txt','w')
 f.write(a)
 f.close()
 print 'Page saved in app directory!'
-'''
+
 #opening the file using web browser
 print 'Opening the page...'
 os.system('open website.html')
+
 '''
 
